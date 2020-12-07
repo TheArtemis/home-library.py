@@ -147,7 +147,7 @@ def get_auth_full():
             return full_names
 
 
-def get_titles(title):
+def get_titles():
     with pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD=' + password) as conn:
         with conn.cursor() as cursor:
 
@@ -181,6 +181,46 @@ def get_genres(genre):
                 return genres
             except:
                 return f"No match found for keyword '{genre}'"
+
+
+def get_auth(arg1=None, arg2=None):
+    with pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD=' + password) as conn:
+        with conn.cursor() as cursor:
+
+            cursor.execute(
+                f"select authID from {authTable} where LastName like '{arg1}' or FirstName like '{arg2}'"
+            )
+            id_match = [row[0] for row in cursor]
+
+            if id_match == []:
+                cursor.execute(
+                    f"select authID from {authTable} where LastName like '{arg2}' or FirstName like '{arg1}'"
+                )
+
+                id_match = [row[0] for row in cursor]
+
+            for elem in id_match:
+                cursor.execute(
+                    f"select bookName from {booksTable} where bookAuthor = {elem}"
+                )
+            auth_match = [row[0] for row in cursor]
+            return auth_match
+
+
+def check_book(title_inp):
+    with pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD=' + password) as conn:
+        with conn.cursor() as cursor:
+
+            cursor.execute(
+                f"select bookName from {booksTable} where bookName like '%{title_inp}%'"
+            )
+
+            book = [row[0] for row in cursor]
+
+            if title_inp == book[0]:
+                return True
+            else:
+                False
 
 
 def make_table():
