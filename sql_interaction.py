@@ -14,15 +14,6 @@ booksTable = "dbo.Books"
 authTable = "dbo.Author"
 genreTable = "dbo.Genre"
 
-"""
-with pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD=' + password) as conn:
-    with conn.cursor() as cursor:
-
-        sql_query = pd.read_sql_query(
-            'SELECT TOP(1000)[bookID], [bookName], [bookAuthor], [bookGenre] FROM[HomeLibraryDB].[dbo].[Books]', conn)
-
-        print(sql_query)
-"""
 # DESKTOP-HCJ19NU\SQLEXPRESS
 
 # HomeLibraryDB
@@ -156,7 +147,7 @@ def get_auth_full():
             return full_names
 
 
-def get_titles():
+def get_titles(title):
     with pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD=' + password) as conn:
         with conn.cursor() as cursor:
 
@@ -169,17 +160,27 @@ def get_titles():
             return book_titles
 
 
-def get_genres():
+def get_genres(genre):
     with pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD=' + password) as conn:
         with conn.cursor() as cursor:
 
-            cursor.execute(
-                f"select Genre from {genreTable}"
-            )
+            try:
+                cursor.execute(
+                    f"select genrID from {genreTable} where Genre like '%{genre}%'"
+                )
 
-            genres = [row[0] for row in cursor]
+                genre_to_search = [row[0] for row in cursor]
 
-            return genres
+                for elem in genre_to_search:
+                    cursor.execute(
+                        f"select bookName from {booksTable} where bookGenre = {elem}"
+                    )
+
+                genres = [row[0] for row in cursor]
+
+                return genres
+            except:
+                return f"No match found for keyword '{genre}'"
 
 
 def make_table():
