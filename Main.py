@@ -1,22 +1,24 @@
 import numpy as np
 import pandas as pd
 from sql_interaction import add_book
-from database_actions import show_database
-
-from sql_interaction import get_auth_full, get_titles, get_genres
+from database_render import render_table
+import sys
 
 print("\n WELCOME TO YOUR HOME LIBRARY!")
+while True:
 
-print("\n Select Action:\n")
+    print("\n waiting for action... :\n")
 
-print(" [ 1 ] - Add Book")
+    print(" [ 1 ] - Add Book")
 
-print(" [ 2 ] - Show Database")
+    print(" [ 2 ] - Show Database")
 
-action = input("\n input number: ")
+    action = input("\n select action: ")
 
-if int(action) == 1:
-    add_book()
+    if str(action) == "1":
+        add_book()
 
-if int(action) == 2:
-    print("", get_auth_full(), "\n", get_titles(), "\n", get_genres(), "\n")
+    if str(action) == "2":
+        print(render_table())
+    else:
+        sys.exit(" Exit Home Library")

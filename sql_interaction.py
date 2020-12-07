@@ -180,3 +180,56 @@ def get_genres():
             genres = [row[0] for row in cursor]
 
             return genres
+
+
+def make_table():
+
+    with pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD=' + password) as conn:
+        with conn.cursor() as cursor:
+
+            display_titles = get_titles()
+
+            cursor.execute(
+                f"select bookAuthor from {booksTable}"
+            )
+
+            author_ids = [row[0] for row in cursor]
+
+            auth_first_names = []
+
+            auth_last_names = []
+
+            for elem in author_ids:
+                cursor.execute(
+                    f"select FirstName from {authTable} where authID = {elem}"
+                )
+                for row in cursor:
+                    auth_first_names.append(row[0])
+
+                cursor.execute(
+                    f"select LastName from {authTable} where authID = {elem}"
+                )
+                for row in cursor:
+                    auth_last_names.append(row[0])
+
+            display_authors = []
+
+            display_genres = []
+
+            for item1, item2 in zip(auth_first_names, auth_last_names):
+                display_authors.append(item1+" "+item2)
+
+            cursor.execute(
+                f"select bookGenre from {booksTable}"
+            )
+
+            genr_ids = [row[0] for row in cursor]
+
+            for item in genr_ids:
+                cursor.execute(
+                    f"select Genre from {genreTable} where genrID = {item}"
+                )
+                for row in cursor:
+                    display_genres.append(row[0])
+
+            return display_titles, display_authors, display_genres
