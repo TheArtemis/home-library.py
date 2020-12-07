@@ -1,20 +1,4 @@
-import pyodbc
-import numpy as np
-import pandas as pd
 from sql_interaction import make_table
-
-server = "DESKTOP-HCJ19NU\SQLEXPRESS"
-database = "HomeLibraryDB"
-
-username = "access"
-password = "access1"
-driver = '{ODBC Driver 17 for SQL Server}'
-
-# Tables
-
-booksTable = "dbo.Books"
-authTable = "dbo.Author"
-genreTable = "dbo.Genre"
 
 
 def render_table():
