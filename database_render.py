@@ -1,4 +1,5 @@
 from sql_interaction import make_table
+import pandas as pd
 
 
 def render_table():
